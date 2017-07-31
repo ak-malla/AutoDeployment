@@ -14,5 +14,7 @@ from wbxtf import WBXTF
 print '~ AK ~'
 
 cmd = "calc"
-testVMList = ["10.1.8.11"]
-WBXTF.WBXTFExecCmd(testVMList,cmd)
+
+vmList = ["10.22.160.85"]
+for vm in vmList:
+	WBXTF.WBXTFExecCmdReturn(vm,cmd)
