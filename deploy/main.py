@@ -26,7 +26,7 @@ for vm in vmList:
     time.sleep(10)
     # Starting the AutoIt Application
     #wbxtfclient 10.22.160.88 process.Run\(java -jar C:\\AutoItWebexClient\\AutoItWebexClient31.0\\webexclient-1.0.jar\)
-    WBXTF.WBXTFExecCmd(vm,"java -jar C:\\AutoItWebexClient\\AutoItWebexClient31.0\\webexclient-1.0.jar")
+    WBXTF.WBXTFExecCmdWithDir(vm,"java -jar webexclient-1.0.jar","",r"C:\AutoItWebexClient\AutoItWebexClient31.0")
     print "Sleeping for 2"
     time.sleep(2)
     #Starting the Node and Hub
