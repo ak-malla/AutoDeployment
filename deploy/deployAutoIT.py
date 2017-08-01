@@ -12,8 +12,6 @@ def copyThreadFunc(sourcePath,Machine,targetPath):
 def copyZipPackageAndUnZip(vmList):
     sourcePath = r"/home/ak/Downloads/AutoItWebexClient31.0.zip"
     targetPath = r"C:\AutoItWebexClient\AutoItWebexClient31.0.zip"
-    #sourceZipFilePath = r"C:\PF_Tools\wbxtfLoadTestNode.zip"
-    #targetPath = r"C:\PF_Tools\wbxtfLoadTestNode.zip"
     unzipFolder = r"C:\AutoItWebexClient"
     #for vm in vmList:
     print "Copying on %s ...." % vmList
@@ -46,13 +44,6 @@ def killSplitCam(vmList):
 if __name__ == '__main__':
     vmList = []
     param_testVMListFile = r"C:\Git\webex-systemtest-performance-pylib\deploy\ClientPool4Test.txt"
-    #fn = open(param_testVMListFile)
-    #while 1:
-    #    machineIP = fn.readline()
-    #    if not machineIP:
-    #        break
-    #    machineIP = machineIP.strip()
-    #    vmList.append(machineIP)
 
     vmList = ["10.22.160.88"]
     copyFile(vmList)

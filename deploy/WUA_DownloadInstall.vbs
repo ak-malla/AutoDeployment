@@ -94,7 +94,8 @@ If rebootMayBeRequired = true Then
 End If
 
 WScript.Echo  vbCRLF & "Would you like to install updates now? (Y/N)"
-strInput = WScript.StdIn.Readline
+'strInput = WScript.StdIn.Readline
+srtInput = "Y"
 WScript.Echo 
 
 If (strInput = "Y" or strInput = "y") Then
@@ -117,3 +118,8 @@ If (strInput = "Y" or strInput = "y") Then
         ": " & installationResult.GetUpdateResult(i).ResultCode   
     Next
 End If
+
+Dim oShell
+Set oShell = CreateObject("WScript.Shell")
+'restart, wait 5 seconds, force running apps to close
+oShell.Run "%comspec% /c shutdown /r /t 5 /f", , TRUE
