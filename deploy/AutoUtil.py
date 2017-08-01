@@ -23,21 +23,33 @@ def getIPs(IP, type):
 		outLst.append(jObject['ip'])
 	return outLst
 
+#This Method helps to copy the latest AutoIt Library files into the remote windows system
 def copyZipPackageAndUnZip(source, fileName, vm):
-	target = "C:\AutoItWebexClient\\"+fileName
-    unzipFolder = r"C:\AutoItWebexClient"
-    print "Copying on %s ...." % vm
-    cpRet = WBXTF.WBXTFCopyFileToFile("local", source, vm, target)
-    if cpRet:
-        print "copy zip success on %s. will unzip it" % vm
-        cmd = r"7z.exe x -aoa -r %s  -o%s * " % (targetPath, unzipFolder)
-        print WBXTF.WBXTFExecCmdWithDir(vm, cmd, "", r"C:\Program Files\7-Zip")
-    else:
-        print "copy failed on %s" % vm
+    	target = "C:\AutoItWebexClient\\"+fileName
+    	source += fileName
+    	unzipFolder = r"C:\AutoItWebexClient"
+    	print "Copying on %s ...." % vm
+    	cpRet = WBXTF.WBXTFCopyFileToFile("local", source, vm, target)
+    	if cpRet:
+        	print "copy zip success on %s. will unzip it" % vm
+        	cmd = r"7z.exe x -aoa -r %s  -o%s * " % (target, unzipFolder)
+       	 	print WBXTF.WBXTFExecCmdWithDir(vm, cmd, "", r"C:\Program Files\7-Zip")
+    	else:
+        	print "copy failed on %s" % vm
 
-
+def copyWindows(vm):
+	cmd = r"if exist C:\AutoItWebexClient\WUA_DownloadInstall.vbs echo file exists"
+	res = WBXTF.WBXTFExecCmdReturn(vm, cmd)
+	print res
+	result = res["result"]["Result"]["fileList"][0]["data"]
+	print result
+	if(result.lower() == ''):
+		print 'Files Does not exists, Copying to remote VM '+vm
+		WBXTF.WBXTFCopyFileToFile("local", "/home/ak/PythonScript/AutoDeployment/deploy/WUA_DownloadInstall.vbs", vm, "C:\AutoItWebexClient\\WUA_DownloadInstall.vbs")
+	
 if __name__ == '__main__':
-	vmObject = getIPs("10.22.136.39", "SEL")
-	for vm in vmObject:
-		print vm
-	copyZipPackageAndUnZip("")
+	#vmObject = getIPs("10.22.136.39", "SEL")
+	#for vm in vmObject:
+		#print vm
+	#copyZipPackageAndUnZip("/home/ak/Downloads/", "AutoItWebexClient31.0.zip" , "10.22.160.85")
+	copyWindows("10.22.160.85")	
