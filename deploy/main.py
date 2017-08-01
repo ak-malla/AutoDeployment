@@ -33,14 +33,14 @@ for vm in vmList:
     #Starting the Node and Hub
     #Hub
     print "Starting the Hub"
-    res = WBXTF.WBXTFExecCmdReturn(r"C:\Users\admin\selenium\start-hub.bat")
+    res = WBXTF.WBXTFExecCmdWithDir(vm,"start-hub.bat","",r"C:\Users\admin\selenium")
     print "%s : %s " % (vm, res)
 
     print "Sleeping for 2"
     time.sleep(2)
     #Node
     print "Starting the Node"
-    res = WBXTF.WBXTFExecCmdReturn(r"C:\Users\admin\selenium\start-node.bat")
+    res = WBXTF.WBXTFExecCmdWithDir(vm,"start-node.bat","",r"C:\Users\admin\selenium")
     print "%s : %s " % (vm, res)
     print "Sleeping for 2"
     time.sleep(2)
