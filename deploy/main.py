@@ -26,23 +26,25 @@ for vm in vmList:
     print "Sleeping for 10"
     time.sleep(10)
     # Starting the AutoIt Application
-    #wbxtfclient 10.22.160.88 process.Run\(java -jar C:\\AutoItWebexClient\\AutoItWebexClient31.0\\webexclient-1.0.jar\)
-    res = WBXTF.WBXTFExecCmdWithDir(vm,"java -jar webexclient-1.0.jar","",r"C:\AutoItWebexClient\AutoItWebexClient31.0")
+    res = WBXTF.WBXTFExecCmdWithDir(vm,"java -jar webexclient-1.0.jar","",r"C:\AutoItWebexClient\AutoItWebexClient 31.0")
     print "%s : %s " % (vm, res)
     print "Sleeping for 2"
     time.sleep(2)
     #Starting the Node and Hub
     #Hub
     print "Starting the Hub"
-    #call("wbxtfclient 10.22.160.88 process.Run\(C:\\Users\\admin\\selenium\\start-hub.bat\)")
+    res = WBXTF.WBXTFExecCmdReturn(r"C:\Users\admin\selenium\start-hub.bat")
+    print "%s : %s " % (vm, res)
+
     print "Sleeping for 2"
     time.sleep(2)
     #Node
     print "Starting the Node"
-    #wbxtfclient 10.22.160.88 process.Run\(C:\\Users\\admin\\selenium\\start-node.bat\)
+    res = WBXTF.WBXTFExecCmdReturn(r"C:\Users\admin\selenium\start-node.bat")
+    print "%s : %s " % (vm, res)
     print "Sleeping for 2"
     time.sleep(2)
     #Starting the restclient jar
     print "Starting the Restclient jar"
-    #wbxtfclient 10.22.160.88 process.Run\(java -jar C:\\AutoItWebexClientT32.4\\restclient-1.0.jar\)
-
+    res = WBXTF.WBXTFExecCmdWithDir(vm,"java -jar restclient-1.0.jar","","C:\AutoItWebexClient T32.4")
+    print "%s : %s " % (vm, res)
