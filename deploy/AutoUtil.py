@@ -3,6 +3,8 @@ import time
 import urllib2
 import os
 
+from wbxtf.WBXTFActionPool import *
+from wbxtf.WBXTFLogex import *
 from wbxtf import WBXTF
 
 __author__ = "AK"
@@ -59,11 +61,11 @@ def executeCmdNotify(result):
 
 
 # Support Multithreading
-def executeCmdByThread(machineList, function):
+def executeCmdByThread(machineList, function, *args):
     actionPool = WBXTFActionPool(8)
     actionPool.setthreadFinishedNotifyFunc(executeCmdNotify)
     for machine in machineList:
-        actionPool.putAction(None, function, machine)
+        actionPool.putAction(None, function, machine, *args)
     actionPool.waitComplete()
 
 
@@ -79,12 +81,12 @@ def pingTestMonitor(IP, type):
     return returnList
 
 # This Method helps to copy the latest AutoIt Library files into the remote windows system
-def copyZipPackageAndUnZip(source, fileName, vm):
-    target = "C:\AutoItWebexClient\\" + fileName
-    source += fileName
+def copyZipPackageAndUnZip(vm, *args):
+    target = "C:\AutoItWebexClient\\" + args[0]
+    #source += args[0]
     unzipFolder = r"C:\AutoItWebexClient"
     print "Copying on %s ...." % vm
-    cpRet = WBXTF.WBXTFCopyFileToFile("local", source, vm, target)
+    cpRet = WBXTF.WBXTFCopyFileToFile("local", args[0], vm, target)
     if cpRet:
         print "copy zip success on %s. will unzip it" % vm
         cmd = r"7z.exe x -aoa -r %s  -o%s * " % (target, unzipFolder)
@@ -102,7 +104,7 @@ def copyWindows(vm):
     print result
     if (result.lower() == ""):
         print 'Files Does not exists, Copying to remote VM ' + vm
-        WBXTF.WBXTFCopyFileToFile("local", "/home/ak/PythonScript/AutoDeployment/deploy/WUA_DownloadInstall.vbs", vm,
+        WBXTF.WBXTFCopyFileToFile("local", "WUA_DownloadInstall.vbs", vm,
                                   "C:\AutoItWebexClient\\WUA_DownloadInstall.vbs")
 
 
@@ -156,14 +158,12 @@ def monitorJavaProcessCount(vm):
 
 
 if __name__ == '__main__':
-    # vmObject = getIPs("10.22.136.39", "SEL")
-    # for vm in vmObject:
-    # print vm
-    # copyZipPackageAndUnZip("/home/ak/Downloads/", "AutoItWebexClient31.0.zip" , "10.22.160.85")
-    # copyWindows("10.22.160.85")
-    # startApplications("10.22.160.85")
-    # print getJavaProcessCount("10.22.160.85")
-    #monitorJavaProcessCount("10.22.160.85")
+    executeCmdByThread(["10.22.160.85","10.22.160.88"],copyZipPackageAndUnZip, "AutoItWebexClient31.0.zip")
+    time.sleep(8)
+    executeCmdByThread(["10.22.160.85","10.22.160.88"],monitorJavaProcessCount)
+    time.sleep(5)
     for vm in pingTestMonitor("10.22.136.39", "SEL"):
-        print vm
-
+        print "\n\n\n\n IP not reachable ..."
+	print vm
+    time.sleep(5)
+    executeCmdByThread(["10.22.160.85","10.22.160.88"],copyWindows)
