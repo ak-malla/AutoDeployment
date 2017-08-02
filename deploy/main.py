@@ -1,22 +1,20 @@
 __author__ = "AK"
 
-from wbxtf import WBXTF
-from AutoUtil import getIPs
-#from subprocess import call
-#import time
+from AutoUtil import *
+import time
 
-
-#
-# This Python Script helps to remotely update/run all the list of the Selenium IP's with latest builds
-# and restarting Applications
-# Featuring:
-# 1. Updating of the AutoIt Library versions
-# 2. Restarting all of the Applications
-#
-#
-
+'''
+    Main Class supporting the AutoDeployment and Monitoring
+'''
 print '~ AK ~'
 
-def copyUpdatedAutoIt(resourceIP, type):
-    vmList = getIPs(resourceIP, type)
-    for vm in vmList:
+if __name__ == '__main__':
+    executeCmdByThread(["10.22.160.85", "10.22.160.88"], copyZipPackageAndUnZip, "AutoItWebexClient31.0.zip")
+    time.sleep(8)
+    executeCmdByThread(["10.22.160.85", "10.22.160.88"], monitorJavaProcessCount)
+    time.sleep(5)
+    for vm in pingTestMonitor("10.22.136.39", "SEL"):
+        print "\n\n\n\n IP not reachable ..."
+        print vm
+    time.sleep(5)
+    executeCmdByThread(["10.22.160.85", "10.22.160.88"], updateWindows)

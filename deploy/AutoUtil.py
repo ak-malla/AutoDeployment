@@ -1,11 +1,9 @@
 import json
-import time
 import urllib2
-import os
 
+from wbxtf import WBXTF
 from wbxtf.WBXTFActionPool import *
 from wbxtf.WBXTFLogex import *
-from wbxtf import WBXTF
 
 __author__ = "AK"
 
@@ -82,17 +80,22 @@ def pingTestMonitor(IP, type):
 
 # This Method helps to copy the latest AutoIt Library files into the remote windows system
 def copyZipPackageAndUnZip(vm, *args):
-    target = "C:\AutoItWebexClient\\" + args[0]
-    #source += args[0]
+    fileName = args[0]
+    target = "C:\AutoItWebexClient\\" + fileName
     unzipFolder = r"C:\AutoItWebexClient"
-    print "Copying on %s ...." % vm
-    cpRet = WBXTF.WBXTFCopyFileToFile("local", args[0], vm, target)
-    if cpRet:
-        print "copy zip success on %s. will unzip it" % vm
-        cmd = r"7z.exe x -aoa -r %s  -o%s * " % (target, unzipFolder)
-        print WBXTF.WBXTFExecCmdWithDir(vm, cmd, "", r"C:\Program Files\7-Zip")
-    else:
-        print "copy failed on %s" % vm
+    cmd = r"if exist "+target+" echo file exists"
+    res = WBXTF.WBXTFExecCmdReturn(vm, cmd)
+    print res
+    result = res["result"]["Result"]["fileList"][0]["data"]
+    if (result.lower() == ""):
+        print "Copying on %s ...." % vm
+        cpRet = WBXTF.WBXTFCopyFileToFile("local", fileName, vm, target)
+        if cpRet:
+            print "copy zip success on %s. will unzip it" % vm
+            cmd = r"7z.exe x -aoa -r %s  -o%s * " % (target, unzipFolder)
+            print WBXTF.WBXTFExecCmdWithDir(vm, cmd, "", r"C:\Program Files\7-Zip")
+        else:
+            print "copy failed on %s" % vm
 
 
 # This Method will help to copy the VB Script which helps to update the windows remotely
@@ -107,6 +110,10 @@ def copyWindows(vm):
         WBXTF.WBXTFCopyFileToFile("local", "WUA_DownloadInstall.vbs", vm,
                                   "C:\AutoItWebexClient\\WUA_DownloadInstall.vbs")
 
+def updateWindows(vm):
+    copyWindows(vm)
+    res = WBXTF.WBXTFExecCmdWithDir(vm, "cscript WUA_DownloadInstall.vbs", "", r"C:\AutoItWebexClient")
+    print "%s : %s " % (vm, res)
 
 # Get Count of all the Java Process currently running
 def getJavaProcessCount(vm):
@@ -119,8 +126,8 @@ def getJavaProcessCount(vm):
 def startApplications(vm):
     # Killing all the java process if any active
     res = WBXTF.WBXTFExecCmdReturn(vm, r"taskkill /F /IM java.exe")
-    time.sleep(2)
     print res
+    time.sleep(2)
     # Starting the AutoIt Application
     res = WBXTF.WBXTFExecCmdWithDir(vm, "java -jar webexclient-1.0.jar", "",
                                     r"C:\AutoItWebexClient\AutoItWebexClient 31.0")
@@ -164,6 +171,6 @@ if __name__ == '__main__':
     time.sleep(5)
     for vm in pingTestMonitor("10.22.136.39", "SEL"):
         print "\n\n\n\n IP not reachable ..."
-	print vm
+        print vm
     time.sleep(5)
-    executeCmdByThread(["10.22.160.85","10.22.160.88"],copyWindows)
+    executeCmdByThread(["10.22.160.85","10.22.160.88"],updateWindows)
