@@ -1,6 +1,7 @@
 from wbxtf import WBXTF
 import urllib2
 import json
+import time
 
 __author__ = "AK"
 
@@ -51,8 +52,18 @@ def copyWindows(vm):
         WBXTF.WBXTFCopyFileToFile("local", "/home/ak/PythonScript/AutoDeployment/deploy/WUA_DownloadInstall.vbs", vm,
                                   "C:\AutoItWebexClient\\WUA_DownloadInstall.vbs")
 
+#Get Count of all the Java Process currently running
+def getJavaProcessCount(vm):
+    cmd = "tasklist | find /C \"java.exe\""
+    res = WBXTF.WBXTFExecCmdReturn(vm,cmd)
+    return res["result"]["Result"]["fileList"][0]["data"]
 
+#This method will help in kill and restart all the java application
 def startApplications(vm):
+    #Killing all the java process if any active
+    res = WBXTF.WBXTFExecCmdReturn(vm,r"taskkill /F /IM java.exe") 
+    time.sleep(2)
+    print res
     # Starting the AutoIt Application
     res = WBXTF.WBXTFExecCmdWithDir(vm, "java -jar webexclient-1.0.jar", "",
                                     r"C:\AutoItWebexClient\AutoItWebexClient 31.0")
@@ -78,11 +89,21 @@ def startApplications(vm):
     res = WBXTF.WBXTFExecCmdWithDir(vm, "java -jar restclient-1.0.jar", "", "C:\AutoItWebexClient T32.4")
     print "%s : %s " % (vm, res)
 
-def checkApplicationCount(vm):
+#This method will run as cron Job monitor the IP, if there is any drop in Application count, and restart if needed
+def monitorJavaProcessCount(vm):
+    count = getJavaProcessCount(vm)
+    if(count < "4"):
+        print "Java Process Count miss match for VM "+vm+" ,Restarting all Java Applications"
+        startApplications(vm)
+    else:
+        print "All the process are in idle count "+count+" state ,VM "+vm
 
 if __name__ == '__main__':
     # vmObject = getIPs("10.22.136.39", "SEL")
     # for vm in vmObject:
     # print vm
-    # copyZipPackageAndUnZip("/home/ak/Downloads/", "AutoItWebexClient31.0.zip" , "10.22.160.85")
-    copyWindows("10.22.160.85")
+    #copyZipPackageAndUnZip("/home/ak/Downloads/", "AutoItWebexClient31.0.zip" , "10.22.160.85")
+    #copyWindows("10.22.160.85")
+    #startApplications("10.22.160.85")
+    #print getJavaProcessCount("10.22.160.85")
+    monitorJavaProcessCount("10.22.160.85")
