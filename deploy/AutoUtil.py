@@ -163,7 +163,7 @@ def monitorJavaProcessCount(vm):
     else:
         print "All the process are in idle count " + count + " state ,VM " + vm
 
-
+'''
 if __name__ == '__main__':
     executeCmdByThread(["10.22.160.85","10.22.160.88"],copyZipPackageAndUnZip, "AutoItWebexClient31.0.zip")
     time.sleep(8)
@@ -174,3 +174,4 @@ if __name__ == '__main__':
         print vm
     time.sleep(5)
     executeCmdByThread(["10.22.160.85","10.22.160.88"],updateWindows)
+'''
